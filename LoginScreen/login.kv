@@ -1,0 +1,25 @@
+<LoginScreen>
+    f_username: username
+    f_password: password
+    GridLayout:
+        center_x: root.center_x
+        center_y: root.center_y
+        size: 300,120
+        rows:3
+        cols:2
+        padding:5
+        spacing:5
+        Label:
+            text: 'Benutzername:'
+        TextInput:
+            id: username
+            multiline: False
+        Label:
+            text: 'Passwort:'
+        TextInput:
+            id: password
+            password: True
+            multiline: False
+        Label:
+        Button:
+            text: 'Login'
