@@ -37,6 +37,7 @@ Builder.load_string("""
             on_press: root.manager.current = 'register'
         Button:
             text: 'Login'
+            on_press: app.checklogin(username.text, password.text)
 
 <RegisterScreen>
     f_username: username
@@ -76,6 +77,41 @@ Builder.load_string("""
         Button:
             text: 'Registrieren'
             on_press: app.save(username.text, password.text)
+            on_press: root.manager.current = 'success'
+
+<LoggedInScreen>
+    BoxLayout:
+        orientation: 'vertical'
+        pos_hint: { 'center_x' : .5, 'center_y' : .5 }
+        size_hint: None, None
+        Label:
+            text: 'Sie haben sich erfolgreich eingeloggt!'
+        Button:
+            text: 'Ok!'
+            on_press: root.manager.current = 'menu'
+
+<SuccessRegisterScreen>
+    BoxLayout:
+        orientation: 'vertical'
+        pos_hint: { 'center_x' : .5, 'center_y' : .5 }
+        size_hint: None, None
+        Label:
+            text: 'Sie haben sich erfolgreich registriert!'
+        Button:
+            text: 'Ok!'
+            on_press: root.manager.current = 'login'
+
+<UnSuccesLogin>
+    BoxLayout:
+        orientation: 'vertical'
+        pos_hint: { 'center_x': .5, 'center_y': .5 }
+        size_hint: None, None
+        Label:
+            text: 'Ihr Passwort oder ihr Benutzername war falsch!'
+        Button:
+            text: 'Ok!'
+            on_press: root.manager.current = 'login'
+
 """)
 
 class LoginScreen(Screen):
@@ -84,19 +120,48 @@ class LoginScreen(Screen):
 class RegisterScreen(Screen):
     pass
 
+class LoggedInScreen(Screen):
+    pass
+
+class SuccessRegisterScreen(Screen):
+    pass
+
+class UnSuccesLogin(Screen):
+    pass
+
 sm = ScreenManager()
 sm.add_widget(LoginScreen(name='login'))
 sm.add_widget(RegisterScreen(name='register'))
+sm.add_widget(LoggedInScreen(name='loggedin'))
+sm.add_widget(SuccessRegisterScreen(name='successregister'))
+sm.add_widget(UnSuccesLogin(name='unsuccesslogin'))
+
+
 
 class LoginApp(App):
     def build(self):
         return sm
 
     def save(self, username, password):
-        fob = open('C:/Users/Public/Documents/test.txt','w')
-        fob.write(username + "\n")
-        fob.write(password)
-        fob.close()
+        uname = open('C:/Users/Public/Documents/username.txt','w')
+        uname.write(username)
+        uname.close()
+        pword = open('C:/Users/Public/Documents/password.txt', 'w')
+        pword.write(password)
+        pword.close()
+
+    def checklogin(self, username, password):
+        ucheck = open('C:/Users/Public/Documents/username.txt', 'r')
+        a = username
+        b = ucheck.read()
+        pcheck = open('C:/Users/Public/Documents/password.txt', 'r')
+        c = password
+        d = pcheck.read()
+        if a == b and c == d:
+            sm.switch_to(LoggedInScreen())
+        else:
+            sm.switch_to(UnSuccesLogin())
+
 
 if __name__ == '__main__':
     LoginApp().run()
