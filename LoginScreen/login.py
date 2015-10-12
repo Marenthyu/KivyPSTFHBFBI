@@ -77,7 +77,7 @@ Builder.load_string("""
         Button:
             text: 'Registrieren'
             on_press: app.save(username.text, password.text)
-            on_press: root.manager.current = 'success'
+            on_press: root.manager.current = 'successregister'
 
 <LoggedInScreen>
     BoxLayout:
@@ -107,10 +107,10 @@ Builder.load_string("""
         pos_hint: { 'center_x': .5, 'center_y': .5 }
         size_hint: None, None
         Label:
-            text: 'Ihr Passwort oder ihr Benutzername war falsch!'
+            text: 'Ihr Passwort oder ihr Benutzername war falsch, bitte registrieren sie sich!'
         Button:
             text: 'Ok!'
-            on_press: root.manager.current = 'login'
+            on_press: root.manager.current = 'register'
 
 """)
 
