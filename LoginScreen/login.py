@@ -3,116 +3,12 @@ __author__ = 'Lion'
 from kivy.app import App
 from kivy.uix.screenmanager import Screen, ScreenManager
 from kivy.lang import Builder
-from kivy.uix.textinput import TextInput
+from os.path import expanduser
+from kivy.uix.popup import Popup
 from kivy.uix.label import Label
-from kivy.uix.button import Button
+import os
 
-Builder.load_string("""
-<LoginScreen>
-    f_username: username
-    f_password: password
-    GridLayout:
-        size:400, 120
-        size_hint: None, None
-        pos_hint: { 'center_x' : .5, 'center_y' : .5 }
-        rows:3
-        cols:2
-        padding:5
-        spacing:5
-        Label:
-            text: 'Benutzername:'
-        TextInput:
-            id: username
-            multiline: False
-            write_tab: False
-        Label:
-            text: 'Passwort:'
-        TextInput:
-            id: password
-            password: True
-            multiline: False
-            write_tab: False
-        Button:
-            text: 'Registrieren..'
-            on_press: root.manager.current = 'register'
-        Button:
-            text: 'Login'
-            on_press: app.checklogin(username.text, password.text)
-
-<RegisterScreen>
-    f_username: username
-    f_password: password
-    f_passwordcheck: passwordcheck
-    GridLayout:
-        size:470, 160
-        size_hint: None, None
-        pos_hint: { 'center_x' : .5, 'center_y' : .5 }
-        rows: 4
-        cols: 2
-        padding: 5
-        spacing: 5
-        Label:
-            text: 'Waehlen Sie ihren Benutzernamen:'
-        TextInput:
-            id: username
-            multiline: False
-            write_tab: False
-        Label:
-            text: 'Waehlen Sie ihr Passwort:'
-        TextInput:
-            id: password
-            password: True
-            multiline: False
-            write_tab: False
-        Label:
-            text: 'Passwort erneut eingeben:'
-        TextInput:
-            id: passwordcheck
-            password: True
-            multiline: False
-            write_tab: False
-        Button:
-            text: 'Login..'
-            on_press: root.manager.current = 'login'
-        Button:
-            text: 'Registrieren'
-            on_press: app.save(username.text, password.text)
-            on_press: root.manager.current = 'successregister'
-
-<LoggedInScreen>
-    BoxLayout:
-        orientation: 'vertical'
-        pos_hint: { 'center_x' : .5, 'center_y' : .5 }
-        size_hint: None, None
-        Label:
-            text: 'Sie haben sich erfolgreich eingeloggt!'
-        Button:
-            text: 'Ok!'
-            on_press: root.manager.current = 'menu'
-
-<SuccessRegisterScreen>
-    BoxLayout:
-        orientation: 'vertical'
-        pos_hint: { 'center_x' : .5, 'center_y' : .5 }
-        size_hint: None, None
-        Label:
-            text: 'Sie haben sich erfolgreich registriert!'
-        Button:
-            text: 'Ok!'
-            on_press: root.manager.current = 'login'
-
-<UnSuccesLogin>
-    BoxLayout:
-        orientation: 'vertical'
-        pos_hint: { 'center_x': .5, 'center_y': .5 }
-        size_hint: None, None
-        Label:
-            text: 'Ihr Passwort oder ihr Benutzername war falsch, bitte registrieren sie sich!'
-        Button:
-            text: 'Ok!'
-            on_press: root.manager.current = 'register'
-
-""")
+Builder.load_file('login.kv')
 
 class LoginScreen(Screen):
     pass
@@ -120,48 +16,121 @@ class LoginScreen(Screen):
 class RegisterScreen(Screen):
     pass
 
-class LoggedInScreen(Screen):
-    pass
-
-class SuccessRegisterScreen(Screen):
-    pass
-
-class UnSuccesLogin(Screen):
-    pass
 
 sm = ScreenManager()
 sm.add_widget(LoginScreen(name='login'))
 sm.add_widget(RegisterScreen(name='register'))
-sm.add_widget(LoggedInScreen(name='loggedin'))
-sm.add_widget(SuccessRegisterScreen(name='successregister'))
-sm.add_widget(UnSuccesLogin(name='unsuccesslogin'))
-
 
 
 class LoginApp(App):
     def build(self):
         return sm
 
+    def existiert(self, f):
+        d = os.path.dirname(f)
+        if not os.path.exists(d):
+            os.makedirs(d)
+
     def save(self, username, password):
-        uname = open('C:/Users/Public/Documents/username.txt','w')
+        home = expanduser("~")
+        uname = open(home + '\\schiffe\\username.txt', 'w')
         uname.write(username)
         uname.close()
-        pword = open('C:/Users/Public/Documents/password.txt', 'w')
+        pword = open(home + '\\schiffe\\password.txt', 'w')
         pword.write(password)
         pword.close()
 
     def checklogin(self, username, password):
-        ucheck = open('C:/Users/Public/Documents/username.txt', 'r')
+        if username == '':
+            popup = Popup(title="Message",
+                        content=Label(text="Bitte geben sie einen Benutzernamen ein!"),
+                        size_hint=(0.8,0.2))
+            popup.open()
+        home = expanduser("~")
+        try:
+            ucheck = open(home + '\\schiffe\\username.txt', 'r')
+            existingusername = ucheck.read()
+            ucheck.close()
+        except FileNotFoundError:
+            print('File not found, making file')
+            self.existiert(home + '\\schiffe\\')
+            ucheck = open(home+'\\schiffe\\username.txt', 'w')
+            ucheck.write('')
+            existingusername = ''
+            ucheck.close()
+        ucheck = open(home + '\\schiffe\\username.txt', 'r')
         a = username
         b = ucheck.read()
-        pcheck = open('C:/Users/Public/Documents/password.txt', 'r')
+        try:
+            pcheck = open(home + '\\schiffe\\password.txt', 'r')
+            password = pcheck.read()
+        except FileNotFoundError:
+            print('File not found, making file')
+            self.existiert(home + '\\schiffe\\')
+            pcheck = open(home+'\\schiffe\\password.txt', 'w')
+            pcheck.write('')
+            password = ''
+            pcheck.close()
+        pcheck = open(home + '\\schiffe\\password.txt', 'r')
         c = password
         d = pcheck.read()
         if a == b and c == d:
-            sm.switch_to(LoggedInScreen())
+            popup = Popup(title = 'Message',
+                conent=Label(text='Erfolreich eingeloggt!'),
+                size_hint=(0.8, 0.2))
+            popup.open()
         else:
-            sm.switch_to(UnSuccesLogin())
+            popup = Popup(title = 'Message',
+                conent=Label(text='Falsches Passwort oder falscher Benutzername!'),
+                size_hint=(0.8, 0.2))
+            popup.open()
+        ucheck.close()
+        pcheck.close()
 
+    def checkregister(self, username, password1, password2):
+        home = expanduser("~")
+        try:
+            ucheck = open(home + '\\schiffe\\username.txt', 'r')
+            existingusername = ucheck.read()
+        except FileNotFoundError:
+            print('File not found, making file')
+            self.existiert(home + '\\schiffe\\')
+            ucheck = open(home+'\\schiffe\\username.txt', 'w')
+            ucheck.write('')
+            existingusername = ''
+        if existingusername == username.text: # Benutzername doppelt?
+            popup = Popup(title="Message",
+                content=Label(text="Ihr Benutzername ist leider schon vergeben!"),
+                size_hint=(0.8,0.2))
+            popup.open()
+        else:
+            if username.text in password1.text:
+                popup = Popup(title="Message",
+                    content=Label(text="Ihr Benutzername darf nicht Ihr Passwort sein!"),
+                    size_hint=(0.8,0.2))
+                popup.open()
+            else:
+                if password1.text != password2.text:
+                    popup = Popup(title="Message",
+                        content=Label(text="Ihre beiden eingegebenen Passwoerter stimmen nicht ueberein!"),
+                        size_hint=(0.8,0.2))
+                    popup.open()
+                else:
+                    if username.text in password1.text:
+                        popup = Popup(title="Message",
+                            content=Label(text="Ihr Passwort darf Ihren Benutzernamen nicht enthalten!"),
+                            size_hint=(0.8,0.2))
+                        popup.open()
+                    else:
+                        self.save(username.text, password1.text)
+                        popup = Popup(title="Message",
+                            content=Label(text="Erfolgreich registriert!"),
+                            size_hint=(0.8,0.2))
+                        popup.open()
+                        sm.remove_widget(RegisterScreen())
+                        sm.add_widget(RegisterScreen(name='register'))
+                        sm.switch_to(LoginScreen(), direction='right')
+        ucheck.close()
 
 if __name__ == '__main__':
     LoginApp().run()
