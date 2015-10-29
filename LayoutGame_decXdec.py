@@ -4,13 +4,11 @@ from kivy.app import App
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.image import Image
 from kivy.core.window import Window
-from kivy.uix.button import Button
-from kivy.uix.widget import Widget
+from kivy.uix.button import Button, ButtonBehavior
 
 
 class Pitch(App):
-
-        def build(self):
+       def build(self):
 
                 h = Window.height
                 w = Window.width
@@ -252,6 +250,7 @@ class Pitch(App):
                 layout.add_widget(Wsr100)
 
                 return layout
+
 
 
 if __name__ == '__main__':
