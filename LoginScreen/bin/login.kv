@@ -1,0 +1,145 @@
+<LoginScreen>
+    f_username: username
+    f_password: password
+    GridLayout:
+        size:400, 150
+        #size:400, 120
+        size_hint: None, None
+        pos_hint: { 'center_x' : .5, 'center_y' : .5 }
+        rows:4
+        cols:2
+        padding:5
+        spacing:5
+        Label:
+            text: 'Benutzername:'
+        TextInput:
+            id: username
+            text: root.cinputtext
+            multiline: False
+            write_tab: False
+            on_text_validate: app.checklogin(username.text, password.text, loginbutton, savebenutzername)
+        Label:
+            text: 'Passwort:'
+        TextInput:
+            id: password
+            password: True
+            multiline: False
+            write_tab: False
+            on_text_validate: app.checklogin(username.text, password.text, loginbutton,savebenutzername)
+        Label:
+            text: 'Benutername speichern:'
+        CheckBox:
+            id: savebenutzername
+            active: False
+        Button:
+            text: 'Registrieren..'
+            on_press: root.manager.transition.direction = 'left'
+            on_press: root.manager.current = 'register'
+        Button:
+            id: loginbutton
+            text: 'Login'
+            on_press: app.checklogin(username.text, password.text, loginbutton, savebenutzername)
+
+
+<RegisterScreen>
+    f_username: username
+    f_password1: password1
+    f_password2: password2
+    GridLayout:
+        size:475, 150
+        size_hint: None, None
+        pos_hint: { 'center_x' : .5, 'center_y' : .5 }
+        rows: 4
+        cols: 2
+        padding: 5
+        spacing: 5
+        Label:
+            text: 'Waehlen Sie ihren Benutzernamen:'
+        TextInput:
+            id: username
+            multiline: False
+            write_tab: False
+            on_text_validate: app.checkregister(username, password1, password2)
+        Label:
+            text: 'Waehlen Sie ihr Passwort:'
+        TextInput:
+            id: password1
+            password: True
+            multiline: False
+            write_tab: False
+            on_text_validate: app.checkregister(username, password1, password2)
+        Label:
+            text: 'Passwort erneut eingeben:'
+        TextInput:
+            id: password2
+            password: True
+            multiline: False
+            write_tab: False
+            on_text_validate: app.checkregister(username, password1, password2)
+        Button:
+            text: 'Login..'
+            on_press: root.manager.transition.direction = 'right'
+            on_press: root.manager.current = 'login'
+        Button:
+            text: 'Registrieren'
+            on_press: app.checkregister(username, password1, password2)
+
+<MainScreen>
+    GridLayout:
+        size:400, 170
+        size_hint: None, None
+        pos_hint: { 'center_x' : .5, 'center_y' : .5 }
+        rows:3
+        cols:1
+        padding:5
+        spacing:15
+        Button:
+            text: 'Spielen!'
+        Button:
+            text: 'Statistiken'
+            on_press: root.manager.transition.direction = 'up'
+            on_press: root.manager.current = 'statistiken'
+        GridLayout:
+            rows: 1
+            cols: 2
+            spacing: 15
+            Button:
+                text: 'Einstellungen'
+            Button:
+                text: 'Logout'
+                on_press: app.logout()
+
+<StatistikScreen>
+    GridLayout:
+        size:430, 230
+        size_hint: None, None
+        pos_hint: { 'center_x' : .5, 'center_y' : .5 }
+        rows:5
+        cols:2
+        padding:5
+        spacing:10
+        Label:
+            text_size: self.size
+            text: 'Deine gespielten Spiele:'
+            halign: 'left'
+        Label:
+            text: root.cgespielteSpiele
+        Label:
+            text_size: self.size
+            text: 'Deine gewonnenen Spiele:'
+            halign: 'left'
+        Label:
+            text: root.cgewonneneSpiele
+        Label:
+            text_size: self.size
+            text: 'Zerstoerte Schiffe:'
+            halign: 'left'
+        Label:
+            text: root.czerstoerteSchiffe
+        Button:
+            text: 'Aktualisiere deine Statistik!'
+            on_press: root.statistikenLaden()
+        Button:
+            text: 'Zurueck..'
+            on_press: root.manager.transition.direction = 'down'
+            on_press: root.manager.current = 'main'
