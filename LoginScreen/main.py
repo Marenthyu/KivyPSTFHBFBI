@@ -9,8 +9,12 @@ from kivy.properties import StringProperty
 from os.path import expanduser
 import os
 from sqlalchemy import *
+from kivy.uix.settings import Settings
+from settingsjson import *
 
 Builder.load_file('bin/login.kv')
+
+
 
 class LoginScreen(Screen):
     cinputtext = StringProperty()
@@ -53,7 +57,6 @@ class StatistikScreen(Screen):
                            content=Label(text="Bitte stellen sie eine Internetverbindung her!"),
                            size_hint=(0.8, 0.4))
             popup6.open()
-
     def statistikenLaden(self):
         self.loadTableUsers()
         users = self.users
@@ -72,11 +75,13 @@ class StatistikScreen(Screen):
     pass
 
 
+
 sm = ScreenManager()
 sm.add_widget(LoginScreen(name='login'))
 sm.add_widget(RegisterScreen(name='register'))
 sm.add_widget(MainScreen(name='main'))
 sm.add_widget(StatistikScreen(name='statistiken'))
+
 
 
 class LoginApp(App):
@@ -107,14 +112,10 @@ class LoginApp(App):
                            content=Label(text="Bitte stellen sie eine Internetverbindung her!"),
                            size_hint=(0.8, 0.4))
             popup6.open()
-
-
     def existiert(self, f):
         d = os.path.dirname(f)
         if not os.path.exists(d):
             os.makedirs(d)
-
-
     def save(self, username, password):
         cusername = str(username)
         cpassword = str(password)
@@ -131,8 +132,6 @@ class LoginApp(App):
             conn = engine.connect()
             result = conn.execute(ins)
             conn.close()
-
-
     def yolo(self, loginbutton, popup1):
         loginbutton.disabled = True
         loginbutton.background_color = [0.7, 0.7, 0.7, 1]
@@ -140,8 +139,6 @@ class LoginApp(App):
         popup1.open()
         popup1.canvas.clear()
         popup1.canvas.draw()
-
-
     def checklogin(self, username, password, loginbutton, savebenutzername):
         print(savebenutzername.active)
         popup0 = Popup(title="Message",
@@ -214,8 +211,6 @@ class LoginApp(App):
         loginbutton.disabled = False
         loginbutton.background_color = [1, 1, 1, 1]
         popup1.dismiss()
-
-
     def checkregister(self, username, password1, password2):
         self.loadTableUsers()
         users = self.users
@@ -260,7 +255,6 @@ class LoginApp(App):
                             sm.remove_widget(RegisterScreen())
                             sm.add_widget(RegisterScreen(name='register'))
                             sm.switch_to(LoginScreen(), direction='right')
-
     def logout(self):
         global benutzername
         benutzername = ''
@@ -268,6 +262,15 @@ class LoginApp(App):
         sm.add_widget(LoginScreen())
         sm.switch_to(LoginScreen(), direction='left')
 
+
+    def build_config(self, config):
+        config.setdefaults('einstellungen', {
+            'ton' : True,
+        })
+    def build_settings(self, settings):
+        settings.add_json_panel("SettingsPanel",
+                                self.config,
+                                data=settings_json)
 
 
 if __name__ == '__main__':
